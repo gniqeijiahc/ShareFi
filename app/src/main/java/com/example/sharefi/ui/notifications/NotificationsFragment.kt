@@ -3,13 +3,18 @@ package com.example.sharefi.ui.notifications
 import FileServerAsyncTask
 import android.app.Activity
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.RouteInfo
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sharefi.R
@@ -98,6 +103,14 @@ class NotificationsFragment : Fragment() {
              * Create a client socket with the host,
              * port, and timeout information.
              */
+
+//            val connectivityManager = getSystemService(context.CONNECTIVITY_SERVICE) as ConnectivityManager
+//            val defaultRoute = connectivityManager.activeNetwork?.let { network ->
+//                connectivityManager.getLinkProperties(network)?.defaultRoute
+//            }
+//            Log.d("DefaultRoute", defaultRoute?.toString() ?: "Unknown")
+
+            WifiManager.EXTRA_NETWORK_INFO
             socket.bind(null)
             socket.connect((InetSocketAddress("192.168.49.157", 8228)), 500)
 
