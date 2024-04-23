@@ -13,7 +13,7 @@ class HomeViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    lateinit var channel : WifiP2pManager.Channel
-    lateinit var wifiP2pConfig: WifiP2pConfig
-    lateinit var wifiP2pManager: WifiP2pManager
+//    lateinit var channel : WifiP2pManager.Channel
+//    lateinit var wifiP2pConfig: WifiP2pConfig
+//    lateinit var wifiP2pManager: WifiP2pManager
 }

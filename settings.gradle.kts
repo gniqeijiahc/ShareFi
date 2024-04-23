@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ShareFi"
 include(":app")
- 
+include(":direct_share")

@@ -1,6 +1,7 @@
 package com.example.sharefi.ui.notifications
 
 import FileServerAsyncTask
+import UdpPacketListener
 import android.app.Activity
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -22,6 +23,9 @@ import com.example.sharefi.databinding.FragmentNotificationsBinding
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 
@@ -49,7 +53,7 @@ class NotificationsFragment : Fragment() {
             textView.text = it
         }
 
-        val statusText: TextView = binding.statusText
+//        val statusText: TextView = binding.statusText
 
         val filePickerButton: Button = root.findViewById(R.id.filePickerButton)
         filePickerButton.setOnClickListener {
@@ -58,13 +62,31 @@ class NotificationsFragment : Fragment() {
 
         val sendButton: Button = root.findViewById(R.id.buttonSend)
         sendButton.setOnClickListener {
-            clientSendFile(textView.toString())
+//            clientSendFile(textView.toString())
+            Thread {
+                try {
+                    val message = "Hello, this is a test message."
+                    val sendData = message.toByteArray()
+                    val address = InetAddress.getByName("127.0.0.1") // 替换为接收方的IP地址
+                    val port = 8228 // 替换为接收方监听的端口号
+                    val packet = DatagramPacket(sendData, sendData.size, address, port)
+                    val socket = DatagramSocket()
+                    socket.send(packet)
+                    socket.close()
+                    Log.d("Client", "Sent message: $message")
+                } catch (e: IOException) {
+                    Log.e("Client", "Error sending message: ${e.message}")
+                }
+            }.start()
         }
 
-        val receiveButton: Button = root.findViewById(R.id.buttonReceive)
-        receiveButton.setOnClickListener {
-            openServer(statusText)
-        }
+//        val receiveButton: Button = root.findViewById(R.id.buttonReceive)
+//        receiveButton.setOnClickListener {
+////            openServer(statusText)
+//            val udpListener = UdpPacketListener()
+//            udpListener.start()
+//        }
+
 
 
         return root
