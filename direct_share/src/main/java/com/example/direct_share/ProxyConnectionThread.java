@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 
 /**
@@ -13,11 +14,20 @@ import java.net.Socket;
 public final class ProxyConnectionThread extends Thread {
 
     private Socket socket;
+    private HashMap<String, ClientInfo> connectedClients;
 
-    public ProxyConnectionThread(Socket socket) {
+    public ProxyConnectionThread(Socket socket, HashMap<String, ClientInfo> connectedClients) {
         this.socket = socket;
+        this.connectedClients = connectedClients;
+        String clientIp = socket.getInetAddress().getHostAddress();
+        connectedClients.put(clientIp, new ClientInfo(clientIp));
         start();
     }
+
+//    public ProxyConnectionThread(Socket socket) {
+//        this.socket = socket;
+//        start();
+//    }
 
     @Override
     public void run() {

@@ -26,6 +26,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.direct_share.DirectNetShare
 import com.example.sharefi.databinding.ActivityMainBinding
 import com.example.sharefi.ui.home.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,48 +34,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var wifiP2pManager: WifiP2pManager
-   // val wifiManager = this.getSystemService<WifiManager>().requireNotNull()
-
-//    public lateinit var wifiP2pConfig: WifiP2pConfig
-    lateinit var receiver : BroadcastReceiver
-    var channel: WifiP2pManager.Channel? = null
-    val wifiP2pManager by lazy {
-        this.getSystemService<WifiP2pManager>().requireNotNull()
-    }
-//    val receiver : BroadcastReceiver = null
-
+    lateinit var share: DirectNetShare
     //broadcast receiver
-    val intentFilter = IntentFilter().apply {
-        addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
+//    val intentFilter = IntentFilter().apply {
+//        addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
+//        addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+//        addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
+//        addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
+//    }
+    private val groupCreatedListener = DirectNetShare.GroupCreatedListener { ssid, password ->
+        // Handle group creation event here if necessary
     }
 
    private val homeViewModel: HomeViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        channel = wifiP2pManager.initialize(
-            this,
-            Looper.getMainLooper(),
-        ) {
-            // Before we used to kill the Network
-            //
-            // But now we do nothing - if you Swipe Away the app from recents,
-            // the p2p manager will die, but when it comes back we want everything to
-            // attempt to run again so we leave this around.
-            //
-            // Any other unexpected death like Airplane mode or Wifi off should be covered by the receiver
-            // so we should never unintentionally leak the service
-            Log.d("YourTag", "WifiP2PManager Channel died! Do nothing :D")
-        }
-
-        receiver = channel?.let {
-            WiFiDirectBroadcastReceiver(wifiP2pManager, it, this)
-        } ?: throw IllegalStateException("Channel is null")
-
+        share = DirectNetShare(this, groupCreatedListener)
         //permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
@@ -85,26 +60,6 @@ class MainActivity : AppCompatActivity() {
         //bind
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-        //default route ip
-       val defaultRouteIpAddress = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-           getWifiDefaultRouteIpAddress(this)
-       } else {
-           TODO("VERSION.SDK_INT < Q")
-       }
-       Log.d("DefaultRoute", defaultRouteIpAddress ?: "Unknown")
-
-        //create group
-//        var wifiP2pConfig = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            WifiP2pConfig.Builder()
-//                .setNetworkName("DIRECT-SF-Wifi")
-//                .setPassphrase("12345678")
-//                .setGroupOperatingBand(WifiP2pConfig.GROUP_OWNER_BAND_2GHZ)
-//                .build()
-//        } else {
-//            TODO("VERSION.SDK_INT < Q")
-//        }
 
         //navigation
         val navView: BottomNavigationView = binding.navView
@@ -120,48 +75,6 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    override fun onResume() {
-        super.onResume()
-        receiver?.also { receiver ->
-            registerReceiver(receiver, intentFilter)
-        }
-    }
-
-    /* unregister the broadcast receiver */
-    override fun onPause() {
-        super.onPause()
-        receiver?.also { receiver ->
-            unregisterReceiver(receiver)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val listener =
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    Log.d("WifiP2P", "Group created successfully")
-                    Toast.makeText(this@MainActivity, "success", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onFailure(reason: Int) {
-                    Log.d("WifiP2P", "Failed to create group. Reason: $reason")
-                    Toast.makeText(this@MainActivity, "fail", Toast.LENGTH_SHORT).show()
-                }
-            }
-        wifiP2pManager.removeGroup(channel, listener)
-    }
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun getWifiDefaultRouteIpAddress(context: Context): String? {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return null
-        val linkProperties = connectivityManager.getLinkProperties(network) ?: return null
-        return linkProperties.routes
-            .filter { routeInfo -> routeInfo.isDefaultRoute && routeInfo.hasGateway() }
-            .mapNotNull { routeInfo -> routeInfo.gateway }
-            .firstOrNull()?.hostAddress
-    }
 
 
     /* register the broadcast receiver with the intent values to be matched */

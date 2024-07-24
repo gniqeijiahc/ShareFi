@@ -12,6 +12,7 @@ public final class ParseRequest {
     public String protocol;
     public String url;
     public int port;
+    private final String TAG = getClass().getSimpleName();
 
     public ParseRequest(String request) {
         String[] split = request.split("\r\n");

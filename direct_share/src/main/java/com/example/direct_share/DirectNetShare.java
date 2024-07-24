@@ -2,9 +2,14 @@ package com.example.direct_share;
 
 
 import android.content.Context;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author shinilms
@@ -19,11 +24,12 @@ public final class DirectNetShare {
     private WifiP2pManager.Channel channel;
     private GroupCreatedListener listener;
     private StartProxyThread proxyThread;
+    private HashMap<String, ClientInfo> connectedClients = new HashMap<>();
 
     public DirectNetShare(Context context, GroupCreatedListener listener) {
         this.listener = listener;
         applicationContext = context.getApplicationContext();
-        proxyThread = new StartProxyThread();
+        proxyThread = new StartProxyThread(connectedClients);
     }
 
     public void start() {
@@ -92,8 +98,19 @@ public final class DirectNetShare {
                 p2pManager.requestGroupInfo(channel, groupInfoListener);
         }
     };
-
+    public HashMap<String, ClientInfo>  getClientInfo() {
+//        List<ClientInfo> clientInfoList = new ArrayList<>();
+//        for (String key : connectedClients.keySet()) {
+//            clientInfoList.add(connectedClients.get(key));
+//        }
+        return connectedClients;
+    }
+    public void setGroupCreatedListener(GroupCreatedListener listener) {
+        this.listener = listener;
+    }
     public interface GroupCreatedListener {
         void onGroupCreated(String ssid, String password);
     }
+
+
 }

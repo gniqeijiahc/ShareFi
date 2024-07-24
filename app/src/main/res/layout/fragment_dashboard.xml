@@ -7,127 +7,95 @@
     tools:context=".ui.dashboard.DashboardFragment">
 
 
-    <LinearLayout
-        android:layout_width="404dp"
-        android:layout_height="439dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_dashboard"
-        app:layout_constraintVertical_bias="0.0">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <!-- Item 1 -->
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"/>
+    </RelativeLayout>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Connection 1" />
 
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chat >" />
-        </LinearLayout>
-
-        <!-- Item 2 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Connection 2" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chat >" />
-        </LinearLayout>
-
-        <!-- Item 3 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Connection 3" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chat >" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/text_dashboard"
-        android:layout_width="413dp"
-        android:layout_height="59dp"
-        android:text="Connection"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="-1dp"
-        tools:layout_editor_absoluteY="4dp" />
-    <!--    <LinearLayout-->
-<!--        android:layout_width="409dp"-->
-<!--        android:layout_height="694dp"-->
+<!--    <LinearLayout-->
+<!--        android:layout_width="319dp"-->
+<!--        android:layout_height="467dp"-->
 <!--        android:orientation="vertical"-->
-<!--        tools:layout_editor_absoluteX="1dp"-->
-<!--        tools:layout_editor_absoluteY="36dp">-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.303">-->
 
+<!--        &lt;!&ndash; Item 1 &ndash;&gt;-->
 <!--        <LinearLayout-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
 <!--            android:orientation="horizontal">-->
 
 <!--            <TextView-->
-<!--                android:id="@+id/textView3"-->
-<!--                android:layout_width="152dp"-->
-<!--                android:layout_height="31dp"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
 <!--                android:layout_weight="1"-->
-<!--                android:text="TextView" />-->
+<!--                android:text="Connection 1" />-->
 
 <!--            <Switch-->
-<!--                android:id="@+id/switch2"-->
-<!--                android:layout_width="64dp"-->
-<!--                android:layout_height="1dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="Switch" />-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content" />-->
 
 <!--            <Button-->
-<!--                android:id="@+id/button"-->
-<!--                android:layout_width="81dp"-->
-<!--                android:layout_height="82dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="Button" />-->
-
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Chat >" />-->
 <!--        </LinearLayout>-->
+
+<!--        &lt;!&ndash; Item 2 &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Connection 2" />-->
+
+<!--            <Switch-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Chat >" />-->
+<!--        </LinearLayout>-->
+
+<!--        &lt;!&ndash; Item 3 &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Connection 3" />-->
+
+<!--            <Switch-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Chat >" />-->
+<!--        </LinearLayout>-->
+
 <!--    </LinearLayout>-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

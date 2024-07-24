@@ -3,6 +3,7 @@ package com.example.direct_share;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
 
 
 /**
@@ -13,8 +14,10 @@ public final class StartProxyThread extends Thread {
 
     private ServerSocket serverSocket;
     public boolean isTrue = true;
+    HashMap<String, ClientInfo> connectedClients;
 
-    public StartProxyThread() {
+    public StartProxyThread(HashMap<String, ClientInfo> connectedClients) {
+        this.connectedClients = connectedClients;
         try {
             this.serverSocket = new ServerSocket(Constants.PROXY_PORT);
         } catch (IOException e) {
@@ -27,7 +30,7 @@ public final class StartProxyThread extends Thread {
         super.run();
         while (isTrue) {
             try {
-                new ProxyConnectionThread(serverSocket.accept());
+                new ProxyConnectionThread(serverSocket.accept(), connectedClients);
             } catch (Exception e) {/*ignore*/}
         }
     }
