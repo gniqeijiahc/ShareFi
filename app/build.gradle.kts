@@ -53,6 +53,16 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.androidx.annotation)
     implementation(project(":direct_share"))
+    implementation(project(":chat"))
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.github.HBiSoft:PickiT:0.1.7")
+    implementation("com.github.QuadFlask:colorpicker:0.0.15")
+    implementation ("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    implementation("com.google.android.material:material:1.0.0-beta01")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

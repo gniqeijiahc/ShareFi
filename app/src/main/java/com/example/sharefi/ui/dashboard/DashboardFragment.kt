@@ -1,21 +1,22 @@
 package com.example.sharefi.ui.dashboard
 
+import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chat.chatClient
 import com.example.direct_share.ClientInfo
 import com.example.direct_share.DirectNetShare
 import com.example.sharefi.MainActivity
 import com.example.sharefi.databinding.FragmentDashboardBinding
 import com.example.sharefi.databinding.ItemClientBinding
-
-
 
 
 class DashboardFragment : Fragment() {
@@ -29,7 +30,13 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var share: DirectNetShare
-
+//    val info: String
+//        get() {
+//            val info = ip!!.getText().toString() + " " + port!!.getText()
+//                .toString() + " " + portText!!.getText().toString()
+//            Log.i(TAG, "info => $info")
+//            return info
+//        }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,17 +49,42 @@ class DashboardFragment : Fragment() {
         val root: View = binding.root
 
         share = (requireActivity() as MainActivity).share
-        val clients = hashMapOf(
-            "192.168.1.2" to ClientInfo("192.168.1.2"),
-            "192.168.1.3" to ClientInfo("192.168.1.3"),
-            "192.168.1.4" to ClientInfo("192.168.1.4")
-        )
+//        val clients = hashMapOf(
+//            "192.168.1.2" to ClientInfo("192.168.1.2"),
+//            "192.168.1.3" to ClientInfo("192.168.1.3"),
+//            "192.168.1.4" to ClientInfo("192.168.1.4")
+//        )
+//        clientAdapter = ClientAdapter(clients)
 
 
 //        clientAdapter = ClientAdapter(share.getClientInfo())
-        clientAdapter = ClientAdapter(clients)
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.adapter = clientAdapter
+//        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+//        binding.recyclerView.adapter = clientAdapter
+
+        val chatButton: Button = binding.chatButton
+        val clientInfo = share.getClientInfo().values.toList()
+        var ip = "192.168.49.1"
+        if(clientInfo.isNotEmpty()){
+            ip = clientInfo[0].ipAddress
+        }
+
+        val info = ip.toString() + " " + "5000" + " " + "5000"
+        Log.i(TAG, "info => $info")
+
+        chatButton.setOnClickListener {
+            val intent = Intent(
+                requireActivity(),
+                chatClient::class.java
+            )
+//                Intent(requireActivity(), com.example.chat.chatClient::class.java)
+            intent.putExtra("ip&port", info)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(intent)
+        }
+
+
 
 //        val textView: TextView = binding.textDashboard
 //        dashboardViewModel.text.observe(viewLifecycleOwner) {
