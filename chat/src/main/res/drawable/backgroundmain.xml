@@ -1,0 +1,5 @@
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:alpha=".3"
+    android:dither="true"
+    android:src="@drawable/backmain"
+    android:tileMode="repeat" />
