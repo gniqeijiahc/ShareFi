@@ -67,7 +67,7 @@ class DashboardFragment : Fragment() {
         if(clientInfo.isNotEmpty()){
             ip = clientInfo[0].ipAddress
         }
-
+        binding.ipAddressTextView.text = ip
         val info = ip.toString() + " " + "5000" + " " + "5000"
         Log.i(TAG, "info => $info")
 

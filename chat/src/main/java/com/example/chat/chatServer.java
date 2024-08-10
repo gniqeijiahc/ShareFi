@@ -32,6 +32,7 @@ public class chatServer extends Thread {
     private ArrayList<Message> messageArray;
     private ChatAdapterRecycler mAdapter;
     private int port;
+    private ServerSocket initSocket;
 
     chatServer(String ownIp, Activity activity, Context context, ChatAdapterRecycler mAdapter, RecyclerView messageList, ArrayList<Message> messageArray, int port, String serverIpAddress) {
         this.ownIp = ownIp;
@@ -47,7 +48,8 @@ public class chatServer extends Thread {
     @SuppressLint("SetTextI18n")
     public void run() {
         try {
-            ServerSocket initSocket = new ServerSocket(port);
+//            ServerSocket initSocket = new ServerSocket(port);
+            initSocket = new ServerSocket(port);
             initSocket.setReuseAddress(true);
             TextView textView;
             textView = activity.findViewById(R.id.textView);
@@ -55,9 +57,13 @@ public class chatServer extends Thread {
             textView.setBackgroundColor(Color.parseColor("#39FF14"));
             System.out.println(TAG + "started");
             while (!Thread.interrupted()) {
-                Socket connectSocket = initSocket.accept();
-                receiveTexts handle = new receiveTexts();
-                handle.execute(connectSocket);
+                try {
+                    Socket connectSocket = initSocket.accept();
+                    receiveTexts handle = new receiveTexts();
+                    handle.execute(connectSocket);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
             initSocket.close();
         } catch (IOException e) {
@@ -108,5 +114,15 @@ public class chatServer extends Thread {
             }
         }
     }
+    public void stopServer() {
+        if (initSocket != null && !initSocket.isClosed()) {
+            try {
+                initSocket.close(); // This will unblock accept()
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }

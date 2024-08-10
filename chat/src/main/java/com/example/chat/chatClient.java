@@ -287,19 +287,35 @@ public class chatClient extends AppCompatActivity implements PickiTCallbacks {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (exit) {
-            pickiT.deleteTemporaryFile();
-            s.interrupt();
-            f.interrupt();
-            finish();
-        } else {
-            Toast.makeText(this, "Press Back again to Exit.",
-                    Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(() -> exit = false, 3 * 1000);
-
-        }
+        new AlertDialog.Builder(this)
+                .setTitle("Exit Confirmation")
+                .setMessage("Are you sure you want to exit? All chat history will be lost.")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Clean up resources
+                    pickiT.deleteTemporaryFile();
+                    s.stopServer();  // Ensure you handle stopping properly
+                    s.interrupt();
+                    f.interrupt();
+                    finish();  // Close the activity
+                    super.onBackPressed();  // Handle the back press
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    dialog.dismiss();  // Dismiss the dialog and keep the user in the activity
+                })
+                .show();
+//        if (exit) {
+//            pickiT.deleteTemporaryFile();
+//            s.stopServer();
+//            s.interrupt();
+//            f.interrupt();
+//            finish();
+//            super.onBackPressed();
+//        } else {
+//            Toast.makeText(this, "Press Back again to Exit.",
+//                    Toast.LENGTH_SHORT).show();
+//            exit = true;
+//            new Handler().postDelayed(() -> exit = false, 3 * 1000);
+//        }
     }
 
     @Override
@@ -443,5 +459,7 @@ public class chatClient extends AppCompatActivity implements PickiTCallbacks {
                 toast.show();
             }
         }
+
+
     }
 }
