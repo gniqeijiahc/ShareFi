@@ -7,7 +7,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <Button
-        android:id="@+id/shareButton"
+        android:id="@+id/settingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Setting"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="SSID"
-            app:prefixText="Direct-SF-">
+            app:prefixText="DIRECT-SF-">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ssidEditText"

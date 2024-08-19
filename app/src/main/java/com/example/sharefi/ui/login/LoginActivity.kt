@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var oneTapClient: SignInClient
+//    private lateinit var oneTapClient: SignInClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,16 +53,14 @@ class LoginActivity : AppCompatActivity() {
         val login = binding.login
         val loading = binding.loading
         val googleSignIn = binding.signInButton
-        oneTapClient = Identity.getSignInClient(this)
+//        oneTapClient = Identity.getSignInClient(this)
 
         auth = Firebase.auth
-
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id))
             .requestEmail()
             .build()
-
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
 

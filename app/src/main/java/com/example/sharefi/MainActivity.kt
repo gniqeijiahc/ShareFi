@@ -17,13 +17,17 @@ import com.example.direct_share.DirectNetShare
 import com.example.sharefi.databinding.ActivityMainBinding
 import com.example.sharefi.ui.home.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
 
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_CODE = 1001
     private lateinit var binding: ActivityMainBinding
     lateinit var share: DirectNetShare
+    lateinit var auth: FirebaseAuth
     //broadcast receiver
 //    val intentFilter = IntentFilter().apply {
 //        addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
@@ -47,8 +51,13 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION_PERMISSION)
         }
 
-        val auth = FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
+
+//        val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
+//        val myRef = database.getReference("pp")
+//        myRef.setValue("Hello, World!")
+
         if (currentUser != null) {
             // 用户已经登录
             val uid = currentUser.uid // 用户的唯一 ID
@@ -73,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
