@@ -37,7 +37,8 @@
                 android:id="@+id/ssidEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="text"
+                android:text="ShareFi"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,7 +54,8 @@
                 android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:text="12345678"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,13 +64,15 @@
             android:id="@+id/portInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Port Number">
+            android:hint="Port Number"
+            android:enabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/portEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="8228"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

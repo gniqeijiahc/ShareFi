@@ -24,6 +24,7 @@ import com.example.sharefi.Utils
 import com.example.sharefi.databinding.FragmentHomeBinding
 import com.example.sharefi.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -35,16 +36,46 @@ class HomeFragment : Fragment() {
     private lateinit var ssidEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var portEditText: EditText
+
+    private lateinit var share: DirectNetShare
+    private lateinit var auth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
+    private lateinit var userId: String
+
+    private val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val usersRef = database.getReference("users")
+    data class User(
+        var userId: String? = null,
+        var SSID: String? = null,
+        var email: String? = null,
+        var point: Number = 0,
+        var password: String? = null,
+        var isSharing: Boolean? = null
+    )
+
+    private lateinit var user: User
     private val groupCreatedListener =
         DirectNetShare.GroupCreatedListener { ssid, password ->
             ssidEditText.setText(ssid.removePrefix("DIRECT-SF-"))
             passwordEditText.setText(password)
             portEditText.setText(Constants.PROXY_PORT.toString())
+
+            //add to firebase
+//            val user = User(userId, SSID = ssid, password = password, isSharing = true)
+            user.SSID = ssid
+            user.password = password
+            user.isSharing = true
+
+            usersRef.child(userId).setValue(user)
+                .addOnSuccessListener {
+                    // Data successfully written
+                    Log.d("Firebase", "User data written successfully.")
+                }
+                .addOnFailureListener { e ->
+                    // Handle the error
+                    Log.e("Firebase", "Failed to write user data.", e)
+                }
         }
-    private lateinit var share: DirectNetShare
-    private lateinit var auth: FirebaseAuth
-
-
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,22 +94,13 @@ class HomeFragment : Fragment() {
         val shareSwitch: Switch = binding.shareSwitch
         val settingButton: Button = binding.settingButton
 
+
         share = (requireActivity() as MainActivity).share
         share.setGroupCreatedListener(groupCreatedListener)
         auth = (requireActivity() as MainActivity).auth
-
-        data class User(
-            var userId: String? = null,
-            var SSID: String? = null,
-            var email: String? = null,
-            var point: Number = 0,
-            var password: String? = null,
-            var isSharing: Boolean? = null
-        )
-        val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
-        val usersRef = database.getReference("users")
-        val userId = usersRef.push().key // Generate a unique key for the user
-        val user = User(userId, "John Doe", "john.doe@example.com")
+        currentUser = auth.currentUser!!
+        userId = currentUser.uid
+        user = User(userId = userId, email = currentUser.email)
 
         shareSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             // Your code here
@@ -90,18 +112,9 @@ class HomeFragment : Fragment() {
                 stopShare()
                 ssidEditText.isEnabled = true
                 passwordEditText.isEnabled = true
-            }
 
-            if (userId != null) {
+                user.isSharing = false
                 usersRef.child(userId).setValue(user)
-                    .addOnSuccessListener {
-                        // Data successfully written
-                        Log.d("Firebase", "User data written successfully.")
-                    }
-                    .addOnFailureListener { e ->
-                        // Handle the error
-                        Log.e("Firebase", "Failed to write user data.", e)
-                    }
             }
         }
 

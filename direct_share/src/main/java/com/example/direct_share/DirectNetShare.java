@@ -35,7 +35,7 @@ public final class DirectNetShare {
     public DirectNetShare(Context context, GroupCreatedListener listener) {
         this.listener = listener;
         applicationContext = context.getApplicationContext();
-        proxyThread = new StartProxyThread(connectedClients);
+         proxyThread = new StartProxyThread(connectedClients);
     }
 
     public void start() {
@@ -45,6 +45,7 @@ public final class DirectNetShare {
 
     public void stop() {
         proxyThread.stopProxy();
+        proxyThread.interrupt(); //restart crash problem
         try {
             p2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
                 @Override
@@ -128,7 +129,16 @@ public final class DirectNetShare {
                     if(listener != null)
                         listener.onGroupCreated(group.getNetworkName(), group.getPassphrase());
 
-                    proxyThread.start();
+                    //restart crash problem
+                    try{
+                        if (proxyThread.getState() != Thread.State.NEW) {
+                            proxyThread = new StartProxyThread(connectedClients);
+                        }
+                        proxyThread.start();
+                    } catch (Exception e) {
+                        Log.e("ThreadError", "Thread already started", e);
+                    }
+
                 }
             } else
                 p2pManager.requestGroupInfo(channel, groupInfoListener);
