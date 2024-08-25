@@ -48,9 +48,11 @@ class HomeFragment : Fragment() {
         var userId: String? = null,
         var SSID: String? = null,
         var email: String? = null,
-        var point: Number = 0,
+        var point: Int = 0,
         var password: String? = null,
-        var isSharing: Boolean? = null
+        var isSharing: Boolean? = null,
+        var latitude: Double = 0.0,
+        var longitude: Double = 0.0
     )
 
     private lateinit var user: User

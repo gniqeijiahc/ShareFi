@@ -2,169 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.notifications.NotificationsFragment">
-
-    <TextView
-        android:id="@+id/text_Connection"
-        android:layout_width="413dp"
-        android:layout_height="59dp"
-        android:text="Connection 1"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="6dp" />
-
-    <!--    <Button-->
-<!--        android:id="@+id/buttonReceive"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="88dp"-->
-<!--        android:layout_marginTop="120dp"-->
-<!--        android:text="Receive"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.709"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.566" />-->
-
-    <!--    <TextView-->
-<!--        android:id="@+id/textView"-->
-<!--        android:layout_width="191dp"-->
-<!--        android:layout_height="70dp"-->
-<!--        android:layout_marginTop="60dp"-->
-<!--        android:text="In this layout, a ScrollView is used to contain the chat messages, and a LinearLayout inside the ScrollView (chatMessagesLayout) is used to add messages dynamically. The EditText (messageEditText) is used for input, and the Button (sendButton) is used to send messages."-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/text_Connection" />-->
-
-    <LinearLayout
-        android:layout_width="424dp"
-        android:layout_height="474dp"
-        android:layout_marginTop="60dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/text_Connection"
-        tools:layout_editor_absoluteX="0dp">
-
-        <!-- Sender message -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/sender_message_background"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello!"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-        <!-- Receiver message -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/sender_message_background"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hi there!"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-        <!-- Sender message -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/sender_message_background"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="How are you?"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-        <!-- Receiver message -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/sender_message_background"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="I'm good, thanks!"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="412dp"
-        android:layout_height="62dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/text_notifications"
-            android:layout_width="231dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingClass">
+        <com.mapbox.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAlignment="center"
-            android:textSize="20sp" />
+            app:mapbox_cameraTargetLat="39.5"
+            app:mapbox_cameraTargetLng="-98.0"
+            app:mapbox_cameraZoom="2.0"
+            app:mapbox_cameraPitch="0.0"
+            app:mapbox_cameraBearing="0.0" />
 
-        <Button
-            android:id="@+id/buttonSend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Send" />
+    </RelativeLayout>
 
-        <Button
-            android:id="@+id/filePickerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="choose File" />
 
-    </LinearLayout>
-
-<!--    <TextView-->
-<!--        android:id="@+id/textView2"-->
-<!--        android:layout_width="215dp"-->
-<!--        android:layout_height="82dp"-->
-<!--        android:layout_marginTop="36dp"-->
-<!--        android:text="This layout defines three LinearLayout items, each containing a TextView for the connection name, a Switch for the switch, and a Button for the button. Adjust the layout and styling as needed for your application."-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/textView"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/textView" />-->
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="562dp" />
-
-    <!--    <TextView-->
-<!--        android:id="@+id/statusText"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:text="TextView"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/buttonReceive"-->
-<!--        tools:ignore="MissingConstraints"-->
-<!--        tools:layout_editor_absoluteX="202dp" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

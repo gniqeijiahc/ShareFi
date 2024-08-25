@@ -1,42 +1,66 @@
 package com.example.sharefi.ui.notifications
 
-import FileServerAsyncTask
-import UdpPacketListener
-import android.app.Activity
+import android.Manifest
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.RouteInfo
-import android.net.Uri
-import android.net.wifi.WifiManager
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sharefi.R
+import com.example.sharefi.MainActivity
 import com.example.sharefi.databinding.FragmentNotificationsBinding
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.Socket
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.mapbox.maps.MapView
+import com.mapbox.maps.Style
+import com.mapbox.maps.loader.MapboxMaps
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+
 
 class NotificationsFragment : Fragment() {
     val FILE_PICKER_REQUEST_CODE = 123
     private var _binding: FragmentNotificationsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private lateinit var mapView: MapView
+    private lateinit var mapboxMaps: MapboxMaps
+    private lateinit var pointAnnotationManager: PointAnnotationManager
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private val binding get() = _binding!!
+    private val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val usersRef = database.getReference("users")
+    private lateinit var auth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
+    private lateinit var userId: String
+    private lateinit var userRef: DatabaseReference
 
+    data class User(
+        var userId: String? = null,
+        var SSID: String? = null,
+        var email: String? = null,
+        var point: Int = 0,
+        var password: String? = null,
+        var isSharing: Boolean? = null,
+        var latitude: Double = 0.0,
+        var longitude: Double = 0.0
+    )
+    private lateinit var user: User
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,135 +68,167 @@ class NotificationsFragment : Fragment() {
     ): View {
         val notificationsViewModel =
             ViewModelProvider(this).get(NotificationsViewModel::class.java)
+//        Plugin.Mapbox.getInstance(context, "YOUR_MAPBOX_ACCESS_TOKEN")
+
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        mapView = binding.mapView
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        requestLocationPermission()
 
-//        val statusText: TextView = binding.statusText
+        auth = (requireActivity() as MainActivity).auth
+        currentUser = auth.currentUser!!
+        userId = currentUser.uid
+        userRef = usersRef.child(userId)
+        usersRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    user = snapshot.getValue(User::class.java)!!
+                    if (user != null) {
+                        // Access user data here, e.g.
+                        val retrievedLatitude = user.latitude
+                        val retrievedLongitude = user.longitude
 
-        val filePickerButton: Button = root.findViewById(R.id.filePickerButton)
-        filePickerButton.setOnClickListener {
-            openFilePicker()
-        }
-
-        val sendButton: Button = root.findViewById(R.id.buttonSend)
-        sendButton.setOnClickListener {
-//            clientSendFile(textView.toString())
-            Thread {
-                try {
-                    val message = "Hello, this is a test message."
-                    val sendData = message.toByteArray()
-                    val address = InetAddress.getByName("127.0.0.1") // 替换为接收方的IP地址
-                    val port = 8228 // 替换为接收方监听的端口号
-                    val packet = DatagramPacket(sendData, sendData.size, address, port)
-                    val socket = DatagramSocket()
-                    socket.send(packet)
-                    socket.close()
-                    Log.d("Client", "Sent message: $message")
-                } catch (e: IOException) {
-                    Log.e("Client", "Error sending message: ${e.message}")
+                    } else {
+                    // Handle case where data is not found
+                    Log.w("User", "User with ID $userId not found in database")
                 }
-            }.start()
-        }
+                } else {
+                    // Handle case where the snapshot doesn't exist
+                    Log.w("User", "No data found in database for user ID $userId")
+                }
+            }
 
-//        val receiveButton: Button = root.findViewById(R.id.buttonReceive)
-//        receiveButton.setOnClickListener {
-////            openServer(statusText)
-//            val udpListener = UdpPacketListener()
-//            udpListener.start()
-//        }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+                Log.w("User", "Error retrieving user data: $error")
+            }
+        })
 
 
+
+
+
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+//
+//        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+//        val mapFragment = childFragmentManager
+//            .findFragmentById(R.id.map) as SupportMapFragment
+//        mapFragment.getMapAsync(this)
 
         return root
     }
+    private fun getLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    val updates = mapOf<String, Any>(
+                        "latitude" to latitude,
+                        "longitude" to longitude
+                    )
+                    userRef.updateChildren(updates).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("FirebaseUpdate", "Latitude updated successfully")
+                        } else {
+                            Log.e("FirebaseUpdate", "Failed to update latitude", task.exception)
+                        }
+                    }
+                } else {
+                    // Handle location null case
+                }
+            }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                getLastKnownLocation()
+            } else {
+                // Permission denied, handle it appropriately
+            }
+        }
+    }
 
+    private fun requestLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            getLastKnownLocation()
+        }
+    }
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-
         startActivityForResult(intent, FILE_PICKER_REQUEST_CODE)
     }
 
-    private fun openServer(statusText: TextView){
-        var fileServer = FileServerAsyncTask(requireContext(), statusText)
-        fileServer.run {  }
-
-    }
-
-    private fun clientSendFile(filePath : String){
-        val context = requireContext()
-        val host: String
-        val port: Int
-        var len: Int
-        val socket = Socket()
-        val buf = ByteArray(1024)
-
-        try {
-            /**
-             * Create a client socket with the host,
-             * port, and timeout information.
-             */
-
-//            val connectivityManager = getSystemService(context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//            val defaultRoute = connectivityManager.activeNetwork?.let { network ->
-//                connectivityManager.getLinkProperties(network)?.defaultRoute
-//            }
-//            Log.d("DefaultRoute", defaultRoute?.toString() ?: "Unknown")
-
-            WifiManager.EXTRA_NETWORK_INFO
-            socket.bind(null)
-            socket.connect((InetSocketAddress("192.168.49.157", 8228)), 500)
-
-            /**
-             * Create a byte stream from a JPEG file and pipe it to the output stream
-             * of the socket. This data is retrieved by the server device.
-             */
-            val outputStream = socket.getOutputStream()
-            val cr = context.contentResolver
-            val inputStream: InputStream? = cr.openInputStream(Uri.parse(filePath))
-            if (inputStream != null) {
-                while (inputStream.read(buf).also { len = it } != -1) {
-                    outputStream.write(buf, 0, len)
-                }
-            }
-            outputStream.close()
-            inputStream?.close()
-        } catch (e: FileNotFoundException) {
-            //catch logic
-        } catch (e: IOException) {
-            //catch logic
-        } finally {
-            /**
-             * Clean up any open sockets when done
-             * transferring or if an exception occurred.
-             */
-            socket.takeIf { it.isConnected }?.apply {
-                close()
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                val filePath = uri.toString()
-                val filePathTextView: TextView = binding.textNotifications
-                filePathTextView.text = filePath
-            }
-        }
+    // Dummy function to get other users' locations
+    private fun getUserLocations(): List<LatLng> {
+        // Replace with actual logic to get user locations
+        return listOf(
+            LatLng(-34.0, 151.0),
+            LatLng(-35.0, 150.0),
+            LatLng(-33.0, 152.0)
+        )
     }
 }

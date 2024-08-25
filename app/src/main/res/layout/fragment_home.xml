@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:text="ShareFi"/>
+                android:text="ShareFi" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:text="12345678"/>
+                android:text="12345678" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,15 +64,15 @@
             android:id="@+id/portInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Port Number"
-            android:enabled="false">
+            android:enabled="false"
+            android:hint="Port Number">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/portEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="69dp"
                 android:inputType="number"
-                android:text="8228"/>
+                android:text="8228" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,15 +101,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:layout_height="193dp"
         android:layout_marginTop="76dp"
         android:src="@drawable/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.464"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.064" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -54,8 +54,9 @@ class LoginActivity : AppCompatActivity() {
         val loading = binding.loading
         val googleSignIn = binding.signInButton
 //        oneTapClient = Identity.getSignInClient(this)
-
+        val googlesigninbutton = binding.signInButton1
         auth = Firebase.auth
+
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id))
@@ -181,6 +182,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         googleSignIn?.setOnClickListener {
+            val RC_SIGN_IN = 9001
+            val signInIntent = mGoogleSignInClient.signInIntent
+            startActivityForResult(signInIntent, RC_SIGN_IN)
+        }
+        googlesigninbutton?.setOnClickListener {
             val RC_SIGN_IN = 9001
             val signInIntent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
