@@ -3,6 +3,7 @@ package com.example.sharefi.ui.notifications
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -10,9 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sharefi.MainActivity
+import com.example.sharefi.R
 import com.example.sharefi.databinding.FragmentNotificationsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -28,10 +31,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.loader.MapboxMaps
+import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 
 
 class NotificationsFragment : Fragment() {
@@ -73,11 +80,30 @@ class NotificationsFragment : Fragment() {
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        mapView = binding.mapView
 
+        //map
+        mapView = binding.mapView
         mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestLocationPermission()
+// Create an instance of the Annotation API and get the PointAnnotationManager.
+
+        // Get the drawable from resources
+        val drawable = ContextCompat.getDrawable(requireContext(), R.mipmap.red_marker)
+
+// Convert drawable to bitmap
+        val red_maker = (drawable as BitmapDrawable).bitmap
+        val annotationApi = mapView?.annotations
+        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
+// Set options for the resulting symbol layer.
+        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+            // Define a geographic coordinate.
+            .withPoint(Point.fromLngLat(18.06, 59.31))
+            // Specify the bitmap you assigned to the point annotation
+            // The bitmap will be added to map style automatically.
+            .withIconImage(red_maker)
+// Add the resulting pointAnnotation to the map.
+        pointAnnotationManager?.create(pointAnnotationOptions)
 
         auth = (requireActivity() as MainActivity).auth
         currentUser = auth.currentUser!!

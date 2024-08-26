@@ -29,17 +29,7 @@ dependencyResolutionManagement {
 //
 //        }
         mavenCentral()
-        maven {
-            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
-            credentials {
-                username = "mapbox"
-                password = "sk.eyJ1IjoicWluZzI3MTgiLCJhIjoiY20wOWU1eTB4MWdiZTJrc2h3YmY0YnByNCJ9.EiOXBXZu1D0UXUNAAtWF_g"
-                    //project.properties["MAPBOX_DOWNLOADS_TOKEN"] as? String ?: ""
-            }
-        }
+
         maven { url = uri("https://jitpack.io") }
     }
 }
