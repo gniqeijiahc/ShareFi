@@ -15,19 +15,10 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-//        maven {
-//            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
-//            authentication
-//            {
-//                basic(BasicAuthentication)
-//            }
-//            credentials
-//            {
-//                username = "mapbox"
-//                password = System.getenv('MAPBOX_DOWNLOADS_TOKEN') ?: ""
-//            }
-//
-//        }
+        maven {
+            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+
+        }
         mavenCentral()
 
         maven { url = uri("https://jitpack.io") }

@@ -55,6 +55,15 @@ dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.mapbox.maps:android:10.14.0")
+// For Glide
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0") // Replace with the latest version
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
+// For Coil
+    implementation ("io.coil-kt:coil:2.7.0") // Replace with the latest version
+    implementation ("io.coil-kt:coil-gif:2.7.0")
+
 
     implementation(libs.androidx.annotation)
     implementation(project(":direct_share"))

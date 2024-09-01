@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.home.HomeFragment">
 
     <Button
@@ -15,47 +16,93 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/shareSwitch"
+        style="@style/Widget.App.Switch"
+        android:layout_width="186dp"
+        android:layout_height="35dp"
+        android:text="Sharing Off"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.836"
+        tools:ignore="MissingConstraints" />
+
+<!--    <com.google.android.material.switchmaterial.SwitchMaterial-->
+<!--        android:id="@+id/shareSwitch"-->
+<!--        android:layout_width="210dp"-->
+<!--        android:layout_height="54dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:text="Start Sharing"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textColor="@color/black"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.487"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/imageView" />-->
+
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="295dp"
         android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shareSwitch">
+        app:layout_constraintTop_toBottomOf="@+id/shareSwitch"
+        app:layout_constraintVertical_bias="0.663"
+        tools:layout_editor_absoluteX="0dp">
 
         <!-- SSID input field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/ssidInputLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
             android:hint="SSID"
-            app:prefixText="DIRECT-SF-">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:prefixText="DIRECT-SF-"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.TextInputLayout.Rounded"
+            style="@style/MyTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ssidEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:inputType="text"
-                android:text="ShareFi" />
-
+                android:text="ShareFi"
+                style="@style/MyTextInputEditText"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password input field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordInputLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
             android:hint="Password"
-            app:endIconMode="password_toggle">
+            app:endIconMode="password_toggle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ssidInputLayout"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.TextInputLayout.Rounded"
+            style="@style/MyTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:inputType="textPassword"
-                android:text="12345678" />
+                android:text="12345678"
+                style="@style/MyTextInputEditText"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,33 +110,28 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/portInputLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:enabled="false"
-            android:hint="Port Number">
+            android:hint="Port Number"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordInputLayout"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.TextInputLayout.Rounded"
+            style="@style/MyTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/portEditText"
                 android:layout_width="match_parent"
-                android:layout_height="69dp"
+                android:layout_height="match_parent"
                 android:inputType="number"
-                android:text="8228" />
+                android:text="8228"
+                style="@style/MyTextInputEditText"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
+
     </LinearLayout>
-
-
-    <Switch
-        android:id="@+id/shareSwitch"
-        android:layout_width="210dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="48dp"
-        android:text="Start Sharing"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/textView5"
@@ -101,15 +143,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="280dp"
-        android:layout_height="193dp"
+        android:layout_width="243dp"
+        android:layout_height="218dp"
         android:layout_marginTop="76dp"
-        android:src="@drawable/logo"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.064" />
+        app:layout_constraintVertical_bias="0.0" />
 
+    <!--    android:src="@drawable/logo"-->
 </androidx.constraintlayout.widget.ConstraintLayout>

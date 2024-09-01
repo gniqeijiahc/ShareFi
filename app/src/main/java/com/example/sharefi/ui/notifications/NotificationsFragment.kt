@@ -3,9 +3,11 @@ package com.example.sharefi.ui.notifications
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
+import android.os.SystemClock.sleep
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,23 +34,30 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.loader.MapboxMaps
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 
 
 class NotificationsFragment : Fragment() {
-    val FILE_PICKER_REQUEST_CODE = 123
+
     private var _binding: FragmentNotificationsBinding? = null
     private lateinit var mapView: MapView
-    private lateinit var mapboxMaps: MapboxMaps
+    private lateinit var mapboxMap: MapboxMap
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    private lateinit var red_maker : Bitmap
     private val binding get() = _binding!!
     private val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
     private val usersRef = database.getReference("users")
@@ -76,34 +85,34 @@ class NotificationsFragment : Fragment() {
         val notificationsViewModel =
             ViewModelProvider(this).get(NotificationsViewModel::class.java)
 //        Plugin.Mapbox.getInstance(context, "YOUR_MAPBOX_ACCESS_TOKEN")
-
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         //map
         mapView = binding.mapView
-        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS)
+        mapboxMap = mapView.getMapboxMap()
+        mapboxMap.loadStyleUri(Style.MAPBOX_STREETS)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestLocationPermission()
-// Create an instance of the Annotation API and get the PointAnnotationManager.
 
-        // Get the drawable from resources
+        val annotationApi = mapView.annotations
+        pointAnnotationManager = annotationApi.createPointAnnotationManager()
         val drawable = ContextCompat.getDrawable(requireContext(), R.mipmap.red_marker)
-
-// Convert drawable to bitmap
-        val red_maker = (drawable as BitmapDrawable).bitmap
-        val annotationApi = mapView?.annotations
-        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView)
-// Set options for the resulting symbol layer.
+        red_maker = (drawable as BitmapDrawable).bitmap
         val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-            // Define a geographic coordinate.
             .withPoint(Point.fromLngLat(18.06, 59.31))
-            // Specify the bitmap you assigned to the point annotation
-            // The bitmap will be added to map style automatically.
             .withIconImage(red_maker)
-// Add the resulting pointAnnotation to the map.
-        pointAnnotationManager?.create(pointAnnotationOptions)
+
+        pointAnnotationManager.create(pointAnnotationOptions)
+
+        val cameraPosition = CameraOptions.Builder()
+            .zoom(2.0)
+            .center(Point.fromLngLat(18.06, 59.31))
+            .build()
+
+        // set camera position
+        mapView.getMapboxMap().setCamera(cameraPosition)
+
 
         auth = (requireActivity() as MainActivity).auth
         currentUser = auth.currentUser!!
@@ -117,6 +126,15 @@ class NotificationsFragment : Fragment() {
                         // Access user data here, e.g.
                         val retrievedLatitude = user.latitude
                         val retrievedLongitude = user.longitude
+                        mapboxMap.flyTo(
+                            CameraOptions.Builder()
+                                .zoom(14.0)
+                                .center(Point.fromLngLat(user.longitude, user.latitude)) // Note: longitude comes first in Point.fromLngLat
+                                .build(),
+                            MapAnimationOptions.Builder()
+                            .duration(3000) // Animation duration in milliseconds
+                            .build()
+                        )
 
                     } else {
                     // Handle case where data is not found
@@ -134,17 +152,6 @@ class NotificationsFragment : Fragment() {
             }
         })
 
-
-
-
-
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-//
-//        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        val mapFragment = childFragmentManager
-//            .findFragmentById(R.id.map) as SupportMapFragment
-//        mapFragment.getMapAsync(this)
-
         return root
     }
     private fun getLastKnownLocation() {
@@ -156,13 +163,7 @@ class NotificationsFragment : Fragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return
         }
         fusedLocationClient.lastLocation
@@ -174,6 +175,12 @@ class NotificationsFragment : Fragment() {
                         "latitude" to latitude,
                         "longitude" to longitude
                     )
+                    pointAnnotationManager.create(
+                        PointAnnotationOptions()
+                        .withPoint(Point.fromLngLat(longitude, latitude))
+                        .withIconImage(red_maker)
+                    )
+                    moveCamerala_lo(latitude, longitude)
                     userRef.updateChildren(updates).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d("FirebaseUpdate", "Latitude updated successfully")
@@ -215,6 +222,15 @@ class NotificationsFragment : Fragment() {
             getLastKnownLocation()
         }
     }
+
+    private fun moveCamerala_lo(latitude: Double, longitude: Double) {
+        mapView.getMapboxMap().easeTo(
+            CameraOptions.Builder()
+                .zoom(14.0)
+                .center(Point.fromLngLat(longitude, latitude)) // Note: longitude comes first in Point.fromLngLat
+                .build()
+        )
+    }
     override fun onStart() {
         super.onStart()
         mapView.onStart()
@@ -239,22 +255,4 @@ class NotificationsFragment : Fragment() {
         _binding = null
     }
 
-
-    private fun openFilePicker() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-        }
-        startActivityForResult(intent, FILE_PICKER_REQUEST_CODE)
-    }
-
-    // Dummy function to get other users' locations
-    private fun getUserLocations(): List<LatLng> {
-        // Replace with actual logic to get user locations
-        return listOf(
-            LatLng(-34.0, 151.0),
-            LatLng(-35.0, 150.0),
-            LatLng(-33.0, 152.0)
-        )
-    }
 }

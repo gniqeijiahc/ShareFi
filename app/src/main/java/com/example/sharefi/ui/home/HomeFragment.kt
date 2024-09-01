@@ -13,16 +13,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Switch
 import androidx.annotation.RequiresApi
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import coil.load
+import com.bumptech.glide.Glide
 import com.example.direct_share.Constants
 import com.example.direct_share.DirectNetShare
 import com.example.sharefi.MainActivity
+import com.example.sharefi.R
 import com.example.sharefi.Utils
 import com.example.sharefi.databinding.FragmentHomeBinding
 import com.example.sharefi.ui.login.LoginActivity
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.ShapeAppearanceModel
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -36,6 +44,7 @@ class HomeFragment : Fragment() {
     private lateinit var ssidEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var portEditText: EditText
+    private lateinit var imageView : ImageView
 
     private lateinit var share: DirectNetShare
     private lateinit var auth: FirebaseAuth
@@ -93,8 +102,18 @@ class HomeFragment : Fragment() {
         ssidEditText = binding.ssidEditText
         passwordEditText = binding.passwordEditText
         portEditText = binding.portEditText
-        val shareSwitch: Switch = binding.shareSwitch
+        val shareSwitch = binding.shareSwitch
         val settingButton: Button = binding.settingButton
+        imageView = binding.imageView
+
+        val ssidInputLayout = binding.ssidInputLayout
+        val passwordInputLayout = binding.passwordInputLayout
+        val portInputLayout = binding.portInputLayout
+        val cornerRadius = ssidInputLayout.height / 2f
+
+
+        imageView.setImageResource(R.drawable.startsharing)
+
 
 
         share = (requireActivity() as MainActivity).share
@@ -108,10 +127,12 @@ class HomeFragment : Fragment() {
             // Your code here
             if (isChecked) {
                 checkWifiAndStart()
+                shareSwitch.setText("Sharing On")
                 ssidEditText.isEnabled = false
                 passwordEditText.isEnabled = false
             } else {
                 stopShare()
+                shareSwitch.setText("Sharing Off")
                 ssidEditText.isEnabled = true
                 passwordEditText.isEnabled = true
 
@@ -124,7 +145,6 @@ class HomeFragment : Fragment() {
         settingButton.setOnClickListener{
             // Sign out the user
             auth.signOut()
-
 
             // Optional: Redirect to login screen
             val intent = Intent(requireActivity(), LoginActivity::class.java)
@@ -176,6 +196,12 @@ class HomeFragment : Fragment() {
     private fun startShare() {
 //        share = DirectNetShare(requireActivity(), groupCreatedListener)
         share.start()
+
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.onstarting)
+            .into(imageView)
 //        lifecycleScope.launch {
 //            val success = rootManager.dhcpSetup()
 //            Log.d("MainActivity", "DHCP setup successful? $success")
@@ -192,6 +218,7 @@ class HomeFragment : Fragment() {
 
     private fun stopShare() {
         share.stop()
+        imageView.setImageResource(R.drawable.startsharing)
 //        ssidEditText.setText("")
 //        passwordEditText.setText("")
 //        portEditText.setText("")
