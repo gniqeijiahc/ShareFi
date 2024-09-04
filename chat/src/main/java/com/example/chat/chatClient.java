@@ -45,6 +45,9 @@ import com.example.chat.fileServer;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.hbisoft.pickit.PickiT;
 import com.hbisoft.pickit.PickiTCallbacks;
 
@@ -61,6 +64,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import com.google.ai.client.generativeai.GenerativeModel;
+import com.google.ai.client.generativeai.java.GenerativeModelFutures;
+import com.google.ai.client.generativeai.type.Content;
+import com.google.ai.client.generativeai.type.GenerateContentResponse;
 
 public class chatClient extends AppCompatActivity implements PickiTCallbacks {
     String TAG = "CLIENT ACTIVITY";
@@ -124,12 +134,33 @@ public class chatClient extends AppCompatActivity implements PickiTCallbacks {
         ownIp = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
         getSupportActionBar().setTitle("Connection to " + serverIpAddress);
-
-        if (!serverIpAddress.equals("")) {
+        if(serverIpAddress.equals("0.0.0.0")){
+            initializeAIChat();
+            sent.setOnClickListener(v -> {
+                if (!smessage.getText().toString().isEmpty()) {
+                    String userInput = smessage.getText().toString();
+                    // Send message to AI
+                    sendToAI(userInput);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please write something", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if (!serverIpAddress.equals("")) {
             s = new chatServer(ownIp, this, getApplicationContext(), mMessageAdapter, mMessageRecycler, messageArray, myport, serverIpAddress);
             s.start();
             f = new fileServer(getApplicationContext(), mMessageAdapter, mMessageRecycler, messageArray, myport, serverIpAddress);
             f.start();
+
+            sent.setOnClickListener(v -> {
+                if (!smessage.getText().toString().isEmpty()) {
+                    User user = new User("1:" + smessage.getText().toString());
+                    user.execute();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Please write something", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
         }
 
         if (permissionAlreadyGranted()) {
@@ -138,15 +169,7 @@ public class chatClient extends AppCompatActivity implements PickiTCallbacks {
         }
 
         requestPermission();
-        sent.setOnClickListener(v -> {
-            if (!smessage.getText().toString().isEmpty()) {
-                User user = new User("1:" + smessage.getText().toString());
-                user.execute();
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "Please write something", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
+
 
         fileUp.setOnClickListener(v -> {
             Intent intent = new Intent();
@@ -156,6 +179,75 @@ public class chatClient extends AppCompatActivity implements PickiTCallbacks {
         });
 
 
+    }
+    private void initializeAIChat() {
+        getSupportActionBar().setTitle("Chat with Gemini");
+
+    }
+    @SuppressLint("StaticFieldLeak")
+    private void sendToAI(String userInput) {
+
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                String aiResponse = "";
+                try {
+                    // Make API call to AI service using userInput
+                    // Example: aiResponse = callAIChatAPI(userInput);
+                    // Specify a Gemini model appropriate for your use case
+                    GenerativeModel gm =
+                            new GenerativeModel(
+                                    /* modelName */ "gemini-1.5-flash",
+                                    // Access your API key as a Build Configuration variable (see "Set up your API key"
+                                    // above)
+                                    /* apiKey */ "AIzaSyCeEkC0uUV9IdyqXDL0xeRLTlpD0I93HF8");
+                    GenerativeModelFutures model = GenerativeModelFutures.from(gm);
+
+                    Content content =
+                            new Content.Builder().addText(userInput).build();
+
+                    // For illustrative purposes only. You should use an executor that fits your needs.
+                    Executor executor = Executors.newSingleThreadExecutor();
+
+                    ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
+                    Futures.addCallback(
+                            response,
+                            new FutureCallback<GenerateContentResponse>() {
+                                @Override
+                                public void onSuccess(GenerateContentResponse result) {
+                                    String resultText = result.getText();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            messageArray.add(new Message(resultText, 1, Calendar.getInstance().getTime()));
+                                            mMessageRecycler.setAdapter(mMessageAdapter); // Or notify the adapter of data change
+                                            smessage.setText("");
+                                        }
+                                    });
+                                    Log.d("ChatApp", "Generated content: " + resultText);
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    t.printStackTrace();
+                                    Log.e("ChatApp", "Failed to generate content", t);
+                                }
+                            },
+                            executor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return aiResponse;
+            }
+
+            @Override
+            protected void onPostExecute(String aiResponse) {
+                messageArray.add(new Message(userInput, 0, Calendar.getInstance().getTime()));
+//                messageArray.add(new Message(aiResponse, 1, Calendar.getInstance().getTime()));
+                mMessageRecycler.setAdapter(mMessageAdapter);
+                smessage.setText("");
+            }
+        }.execute();
     }
 
     @Override

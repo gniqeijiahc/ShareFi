@@ -57,7 +57,9 @@ dependencies {
     implementation ("com.mapbox.maps:android:10.14.0")
 // For Glide
 
-    implementation ("com.github.bumptech.glide:glide:4.16.0") // Replace with the latest version
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.fragment.ktx) // Replace with the latest version
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 
 // For Coil
@@ -88,4 +90,9 @@ dependencies {
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
+
+
+    //ai chat
+    implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
+
 }

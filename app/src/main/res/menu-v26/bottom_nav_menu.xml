@@ -16,4 +16,9 @@
         android:icon="@drawable/nearby"
         android:title="@string/title_notifications" />
 
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/person"
+        android:title="@string/title_profile" />
+
 </menu>

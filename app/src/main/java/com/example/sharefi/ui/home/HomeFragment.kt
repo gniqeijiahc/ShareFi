@@ -14,12 +14,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Switch
 import androidx.annotation.RequiresApi
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import coil.load
 import com.bumptech.glide.Glide
 import com.example.direct_share.Constants
 import com.example.direct_share.DirectNetShare
@@ -28,9 +25,6 @@ import com.example.sharefi.R
 import com.example.sharefi.Utils
 import com.example.sharefi.databinding.FragmentHomeBinding
 import com.example.sharefi.ui.login.LoginActivity
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.ShapeAppearanceModel
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -103,7 +97,7 @@ class HomeFragment : Fragment() {
         passwordEditText = binding.passwordEditText
         portEditText = binding.portEditText
         val shareSwitch = binding.shareSwitch
-        val settingButton: Button = binding.settingButton
+
         imageView = binding.imageView
 
         val ssidInputLayout = binding.ssidInputLayout
@@ -142,15 +136,8 @@ class HomeFragment : Fragment() {
         }
 
 
-        settingButton.setOnClickListener{
-            // Sign out the user
-            auth.signOut()
 
-            // Optional: Redirect to login screen
-            val intent = Intent(requireActivity(), LoginActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish() // Close the current activity
-        }
+
         addTextChangeListener(ssidEditText) { newSsid ->
             share.setSsid(newSsid)
         }

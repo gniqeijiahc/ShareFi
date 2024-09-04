@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.chatClient
 import com.example.direct_share.ClientInfo
@@ -17,7 +18,8 @@ import com.example.direct_share.DirectNetShare
 import com.example.sharefi.MainActivity
 import com.example.sharefi.databinding.FragmentDashboardBinding
 import com.example.sharefi.databinding.ItemClientBinding
-
+import com.google.ai.client.generativeai.GenerativeModel
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
@@ -83,8 +85,30 @@ class DashboardFragment : Fragment() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(intent)
         }
-
-
+        val apiKey = "AIzaSyCeEkC0uUV9IdyqXDL0xeRLTlpD0I93HF8"
+        val chatAiButton : Button = binding.chatAi
+        chatAiButton.setOnClickListener {
+            val intent = Intent(
+                requireActivity(),
+                chatClient::class.java
+            )
+            intent.putExtra("ip&port", "0.0.0.0 0 0")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(intent)
+        }
+//        chatButton.setOnClickListener {
+//            lifecycleScope.launch {
+//                val generativeModel = GenerativeModel(
+//                    modelName = "gemini-1.5-flash",
+//                    apiKey = apiKey
+//                )
+//
+//                val prompt = "Write a story about a magic backpack."
+//                val response = generativeModel.generateContent(prompt)
+//                print(response.text)
+//                Log.d("ChatApp", "Generated content: ${response.text}")
+//            }
+//        }
 
 //        val textView: TextView = binding.textDashboard
 //        dashboardViewModel.text.observe(viewLifecycleOwner) {
