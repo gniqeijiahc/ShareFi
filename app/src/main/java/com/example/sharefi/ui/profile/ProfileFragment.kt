@@ -15,6 +15,7 @@ import com.example.sharefi.databinding.FragmentHomeBinding
 import com.example.sharefi.databinding.FragmentProfileBinding
 import com.example.sharefi.ui.home.HomeFragment
 import com.example.sharefi.ui.login.LoginActivity
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -71,16 +72,16 @@ class ProfileFragment : Fragment() {
             }
         }
         useremail.text = user.email
-//        val settingButton: Button = binding.settingButton
-//        settingButton.setOnClickListener{
-//            // Sign out the user
-//            auth.signOut()
-//
-//            // Optional: Redirect to login screen
-//            val intent = Intent(requireActivity(), LoginActivity::class.java)
-//            startActivity(intent)
-//            requireActivity().finish() // Close the current activity
-//        }
+        val settingButton: Button = binding.signOutButton
+        settingButton.setOnClickListener{
+            // Sign out the user
+            auth.signOut()
+
+            // Optional: Redirect to login screen
+            val intent = Intent(requireActivity(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish() // Close the current activity
+        }
 
 //        return inflater.inflate(R.layout.fragment_profile, container, false)
         return root

@@ -87,6 +87,12 @@
 
             <!--Option Bar-->
 
+            <Button
+                android:id="@+id/signOutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign Out" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

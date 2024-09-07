@@ -2,12 +2,14 @@ package com.example.sharefi.ui.dashboard
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,22 +18,43 @@ import com.example.chat.chatClient
 import com.example.direct_share.ClientInfo
 import com.example.direct_share.DirectNetShare
 import com.example.sharefi.MainActivity
+import com.example.sharefi.R
 import com.example.sharefi.databinding.FragmentDashboardBinding
 import com.example.sharefi.databinding.ItemClientBinding
+import com.example.sharefi.ui.home.HomeFragment
+import com.example.sharefi.ui.notifications.NotificationsFragment
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.mapbox.geojson.Point
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
-
+    private lateinit var enableButton: MaterialButton
+    private lateinit var enableButton2: MaterialButton
+    private lateinit var enableButton3: MaterialButton
     private lateinit var clientAdapter: ClientAdapter
-
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     private lateinit var share: DirectNetShare
+
+    private val database = FirebaseDatabase.getInstance("https://sharefi-84214-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val usersRef = database.getReference("users")
+    private lateinit var user: HomeFragment.User
+    private var userList = mutableListOf<HomeFragment.User>()
 //    val info: String
 //        get() {
 //            val info = ip!!.getText().toString() + " " + port!!.getText()
@@ -51,17 +74,30 @@ class DashboardFragment : Fragment() {
         val root: View = binding.root
 
         share = (requireActivity() as MainActivity).share
-//        val clients = hashMapOf(
-//            "192.168.1.2" to ClientInfo("192.168.1.2"),
-//            "192.168.1.3" to ClientInfo("192.168.1.3"),
-//            "192.168.1.4" to ClientInfo("192.168.1.4")
-//        )
-//        clientAdapter = ClientAdapter(clients)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    userList = mutableListOf<HomeFragment.User>()
+
+                    for (userSnapshot in dataSnapshot.children) {
+                        val user = userSnapshot.getValue(HomeFragment.User::class.java)
+
+                        user?.let { userList.add(it) }
+                    }
 
 
-//        clientAdapter = ClientAdapter(share.getClientInfo())
-//        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-//        binding.recyclerView.adapter = clientAdapter
+                } else {
+                    Log.d("Firebase", "No users found")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
 
         val chatButton: Button = binding.chatButton
         val clientInfo = share.getClientInfo().values.toList()
@@ -85,7 +121,7 @@ class DashboardFragment : Fragment() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(intent)
         }
-        val apiKey = "AIzaSyCeEkC0uUV9IdyqXDL0xeRLTlpD0I93HF8"
+
         val chatAiButton : Button = binding.chatAi
         chatAiButton.setOnClickListener {
             val intent = Intent(
@@ -96,27 +132,38 @@ class DashboardFragment : Fragment() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivity(intent)
         }
-//        chatButton.setOnClickListener {
-//            lifecycleScope.launch {
-//                val generativeModel = GenerativeModel(
-//                    modelName = "gemini-1.5-flash",
-//                    apiKey = apiKey
-//                )
-//
-//                val prompt = "Write a story about a magic backpack."
-//                val response = generativeModel.generateContent(prompt)
-//                print(response.text)
-//                Log.d("ChatApp", "Generated content: ${response.text}")
-//            }
-//        }
 
-//        val textView: TextView = binding.textDashboard
-//        dashboardViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
+    enableButton = binding.enableButton
+    enableButton2 = binding.enableButton2
+    enableButton3 = binding.enableButton3
+
+
+
+// 为每个按钮设置点击监听器
+    enableButton.setOnClickListener { toggleButtonState(enableButton) }
+    enableButton2.setOnClickListener { toggleButtonState(enableButton2) }
+    enableButton3.setOnClickListener { toggleButtonState(enableButton3) }
+
+
+
         return root
     }
 
+
+    private fun toggleButtonState(button: MaterialButton) {
+        val isEnabled = button.text.toString() == "enable"
+
+        if (isEnabled) {
+            button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(button.context, R.color.gray))
+            button.text = "disable"
+            // 假设你已经有了 icon_disable 图标资源
+            button.setIconResource(R.drawable.icon_disable)
+        } else {
+            button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(button.context, R.color.dark_blue))
+            button.text = "enable"
+            button.setIconResource(R.drawable.icon_enable)
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
