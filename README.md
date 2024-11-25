@@ -70,9 +70,9 @@ The "Crowdsourcing Wireless Internet Bandwidth" project transforms internet shar
 ---
 ## **Gallery**  
 Here are visual examples of the project:  
-![Picture 1](picture1.jpg)  
-![Picture 2](picture2.jpg)  
-![Picture 3](picture3.jpg)  
+![Picture 1](Picture1.jpg)  
+![Picture 2](Picture2.jpg)  
+![Picture 3](Picture3.jpg)  
 ![Picture 4](picture4.jpg)  
 ![Picture 5](picture5.jpg)  
 ![Picture 6](picture6.jpg)  
