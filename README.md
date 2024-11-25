@@ -73,13 +73,13 @@ Here are visual examples of the project:
 ![Picture 1](Picture1.jpg)  
 ![Picture 2](Picture2.jpg)  
 ![Picture 3](Picture3.jpg)  
-![Picture 4](picture4.jpg)  
-![Picture 5](picture5.jpg)  
-![Picture 6](picture6.jpg)  
-![Picture 7](picture7.jpg)  
-![Picture 8](picture8.jpg)  
-![Picture 9](picture9.jpg)  
-![Picture 10](picture10.jpg)  
+![Picture 4](Picture4.jpg)  
+![Picture 5](Picture5.jpg)  
+![Picture 6](Picture6.jpg)  
+![Picture 7](Picture7.jpg)  
+![Picture 8](Picture8.jpg)  
+![Picture 9](Picture9.jpg)  
+![Picture 10](Picture10.jpg)  
 
 ## **License**  
 This project is licensed under [MIT License](LICENSE).  
