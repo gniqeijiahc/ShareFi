@@ -68,6 +68,18 @@ By promoting a **culture of sharing** through incentives, chat, and file-sharing
 The "Crowdsourcing Wireless Internet Bandwidth" project transforms internet sharing from a technical process into a cultural phenomenon. By creating a seamless, engaging, and rewarding experience for users, this application contributes to a digitally connected and equitable future.  
 
 ---
+## **Gallery**  
+Here are visual examples of the project:  
+![Picture 1](picture1.jpg)  
+![Picture 2](picture2.jpg)  
+![Picture 3](picture3.jpg)  
+![Picture 4](picture4.jpg)  
+![Picture 5](picture5.jpg)  
+![Picture 6](picture6.jpg)  
+![Picture 7](picture7.jpg)  
+![Picture 8](picture8.jpg)  
+![Picture 9](picture9.jpg)  
+![Picture 10](picture10.jpg)  
 
 ## **License**  
 This project is licensed under [MIT License](LICENSE).  
